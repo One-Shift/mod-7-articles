@@ -81,7 +81,7 @@ if(!empty($data)) {
 $mdl = bo3::c2r([
 	"label-add-category" => $mdl_lang["label"]["add-category"],
 	"category-filter-select" => $mdl_lang["label"]["category-filter-select"],
-	"filter-options" => $categories_list,
+	"filter-options" => (isset($categories_list)) ? $categories_list : "",
 	"name" => $mdl_lang["label"]["name"],
 	"category" => $mdl_lang["label"]["category"],
 	"section" => $mdl_lang["label"]["type"],
