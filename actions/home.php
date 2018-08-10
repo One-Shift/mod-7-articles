@@ -1,6 +1,7 @@
 <?php
 
 $line_tpl = bo3::mdl_load("templates-e/home/table-row.tpl");
+$item_tpl = bo3::mdl_load("templates-e/home/item.tpl");
 $option_item_tpl = bo3::mdl_load("templates-e/home/option-item.tpl");
 
 $articles = new article();
@@ -22,10 +23,14 @@ foreach ($articles as $article) {
 		$table_items = "";
 	}
 
+	if(!isset($list)) {
+		$list = "";
+	}
+
 	$category->setId($article->category_id);
 	$this_category = $category->returnOneCategory();
 
-	$table_items .= bo3::c2r([
+	/* $table_items .= bo3::c2r([
 		"id" => $article->id,
 		"title" => strip_tags($article->title),
 		"category" => ($this_category != FALSE) ? $this_category->title : "--",
@@ -36,7 +41,20 @@ foreach ($articles as $article) {
 		"but-view" => $mdl_lang["label"]["but-view"],
 		"but-edit" => $mdl_lang["label"]["but-edit"],
 		"but-delete" => $mdl_lang["label"]["but-delete"],
-	], $line_tpl);
+	], $line_tpl); */
+
+	$list .= bo3::c2r([
+		"id" => $article->id,
+		"title" => strip_tags($article->title),
+		"category" => ($this_category != FALSE) ? $this_category->title : "--",
+		"published" => ($article->published) ? "checked" : "",
+		"date-created" => date('Y-m-d', strtotime($article->date)),
+		"date-updated-label" => $mdl_lang["label"]["date-updated"],
+		"date-updated" => $article->date_update,
+		"but-view" => $mdl_lang["label"]["but-view"],
+		"but-edit" => $mdl_lang["label"]["but-edit"],
+		"but-delete" => $mdl_lang["label"]["but-delete"],
+	], $item_tpl);
 }
 
 /*------------------------------------------*/
@@ -88,7 +106,8 @@ $mdl = bo3::c2r([
 	"parent-nr" => $mdl_lang["label"]["parent-nr"],
 	"published" => $mdl_lang["label"]["published"],
 	"date" => $mdl_lang["label"]["date"],
-	"table-body" => (isset($table_items)) ? $table_items : "",
+	//"table-body" => (isset($table_items)) ? $table_items : "",
+	"list" => (isset($list)) ? $list : ""
 ], bo3::mdl_load("templates/home.tpl"));
 
 include "pages/module-core.php";
