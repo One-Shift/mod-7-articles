@@ -142,6 +142,21 @@ class article {
 
 		return $toReturn;
 	}
+	
+	public function updatePublished() {
+		global $cfg, $db;
+
+		$query = sprintf(
+			"UPDATE %s_articles SET published = NOT published WHERE id = %s",
+			$cfg->db->prefix, $this->id
+		);
+
+		if($db->query($query)) {
+			return TRUE;
+		}
+
+		return FALSE;
+	}
 
 	public function delete() {
 		global $cfg, $db, $authData;
