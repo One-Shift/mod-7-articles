@@ -4,10 +4,10 @@ $cfg->mdl = new stdClass();
 $cfg->mdl->name = "Articles";
 $cfg->mdl->folder = "mod-7-articles";
 $cfg->mdl->path = "{$cfg->system->path_bo}/modules/{$cfg->mdl->folder}/";
-$cfg->mdl->version = "0.0.5";
+$cfg->mdl->version = "0.0.7";
 $cfg->mdl->developer = "Carlos Santos";
 $cfg->mdl->contact = "carlos@one-shift.com";
-$cfg->mdl->dbTables = ["articles", "articles_lang"];
+$cfg->mdl->dbTables = ["7_articles", "7_articles_lang"];
 
 // load language for module
 if (file_exists("modules/{$cfg->mdl->folder}/languages/{$lg_s}.ini")) {
