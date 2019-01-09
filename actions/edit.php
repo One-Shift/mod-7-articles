@@ -12,7 +12,7 @@ if (!isset($_POST["save"])){
 		$nav_content = "";
 
 		// Return all article info
-		$article = new article();
+		$article = new c7_article();
 		$article->setId($id);
 		$article_result = $article->returnOneArticleAllLanguages();
 
@@ -45,7 +45,7 @@ if (!isset($_POST["save"])){
 			}
 		}
 
-		$category = new category();
+		$category = new c8_category();
 		$category->setLangId(1);
 		$category = $category->returnAllCategories();
 
@@ -54,7 +54,7 @@ if (!isset($_POST["save"])){
 		function recursiveWayGet($id, $i){
 			global $parent_options, $option_item_tpl, $article_result;
 
-			$a = new category();
+			$a = new c8_category();
 			$a->setLangId(1);
 			$a->setParentId($id);
 			$a = $a->returnChildCategories();
@@ -78,7 +78,7 @@ if (!isset($_POST["save"])){
 			}
 		}
 
-		$mainCategories = new category();
+		$mainCategories = new c8_category();
 		$mainCategories->setLangId(1);
 		$allCats = $mainCategories->returnAllMainCategories();
 
@@ -176,7 +176,7 @@ if (!isset($_POST["save"])){
 		header("Location: {$cfg->system->path_bo}/0/{$lg_s}/404/");
 	}
 } else {
-	$article = new article();
+	$article = new c7_article();
 
 	$article->setId($id);
 	$article->setContent($_POST["name"], $_POST["description"]);

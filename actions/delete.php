@@ -2,7 +2,7 @@
 
 	if (isset($id) && !empty($id)) {
 		// Return all category info
-		$article = new article();
+		$article = new c7_article();
 		$article->setId($id);
 		$toReturn = "";
 

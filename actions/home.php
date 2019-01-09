@@ -4,7 +4,7 @@ $line_tpl = bo3::mdl_load("templates-e/home/table-row.tpl");
 $item_tpl = bo3::mdl_load("templates-e/home/item.tpl");
 $option_item_tpl = bo3::mdl_load("templates-e/home/option-item.tpl");
 
-$articles = new article();
+$articles = new c7_article();
 $articles->setLangId($lg);
 
 if(isset($_POST["filterCategory"]) && !empty($_POST["categoryId"]) && $_POST["categoryId"] != "-1") {
@@ -15,7 +15,7 @@ if(isset($_POST["filterCategory"]) && !empty($_POST["categoryId"]) && $_POST["ca
 }
 
 
-$category = new category();
+$category = new c8_category();
 $category->setLangId($lg);
 
 foreach ($articles as $article) {
@@ -60,7 +60,7 @@ foreach ($articles as $article) {
 /*------------------------------------------*/
 function recursiveWayGet($id, $i = 0, &$data = []) {
 	global $lg;
-	$a = new category();
+	$a = new c8_category();
 	$a->setLangId($lg);
 	$a->setParentId($id);
 	$a = $a->returnChildCategories();

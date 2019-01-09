@@ -7,7 +7,7 @@ function update ($id) {
 		"object" => []
 	];
 
-	$article = new article();
+	$article = new c7_article();
 	$article->setId($id);
 
 	$toReturn["status"] = $article->updatePublished();
