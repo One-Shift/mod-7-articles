@@ -61,16 +61,15 @@ if (!isset($_POST["save"])){
 			$i++;
 
 			foreach ($a as $item) {
-				if ($item->id != $id) {
-					$parent_options .= bo3::c2r(
-						[
-							"option-id" => $item->id,
-							"option" => sprintf("%s> %s", str_repeat("-", $i), $item->title),
-							"selected" => ($item->id == $article_result[1]->category_id) ? "selected" : ""
-						],
-						$option_item_tpl
-					);
-				}
+				$parent_options .= bo3::c2r(
+					[
+						"option-id" => $item->id,
+						"option" => sprintf("%s> %s", str_repeat("-", $i), $item->title),
+						"selected" => ($item->id == $article_result[1]->category_id) ? "selected" : ""
+					],
+					$option_item_tpl
+				);
+				
 
 				if ($item->nr_sub_cats > 0) {
 					recursiveWayGet($item->id, $i);
@@ -87,16 +86,15 @@ if (!isset($_POST["save"])){
 				$parent_options = "";
 			}
 
-			if ($item->id != $id) {
-				$parent_options .= bo3::c2r(
-					[
-						"option-id" => $item->id,
-						"option" => $item->title,
-						"selected" => ($item->id == $article_result[1]->category_id) ? "selected" : ""
-					],
-					$option_item_tpl
-				);
-			}
+			$parent_options .= bo3::c2r(
+				[
+					"option-id" => $item->id,
+					"option" => $item->title,
+					"selected" => ($item->id == $article_result[1]->category_id) ? "selected" : ""
+				],
+				$option_item_tpl
+			);
+			
 			recursiveWayGet($item->id, 0);
 		}
 
