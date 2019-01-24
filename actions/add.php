@@ -24,10 +24,11 @@ if (!isset($_POST["save"])) {
 				[
 					"class" => ($i == 0 ? "show active" : ""),
 					"nr" => $index,
-					"label-name" => $mdl_lang["label"]["name"],
-					"label-description" => $mdl_lang["label"]["description"],
-					"place-holder-name" => "",
-					"place-holder-text" => ""
+					"label-title" => $mdl_lang["label"]["title"],
+					"label-content" => $mdl_lang["label"]["content"],
+					"placeholder-title" => $mdl_lang["label"]["placeholder-title"],
+					"placeholder-text" => $mdl_lang["label"]["placeholder-text"],
+					"lang-name" => $lg[2]
 				],
 				$nav_content_tpl
 			);
@@ -105,7 +106,7 @@ if (!isset($_POST["save"])) {
 } else {
 	$article = new c7_article();
 
-	$article->setContent($_POST["name"], $_POST["description"]);
+	$article->setContent($_POST["title"], $_POST["content"]);
 	$article->setCategoryId($_POST["category-parent"]);
 	$article->setCode($_POST["code"]);
 	$article->setDate($_POST["date"]);
@@ -115,16 +116,26 @@ if (!isset($_POST["save"])) {
 
 	if ($article->insert()) {
 		$textToPrint = $mdl_lang["add"]["success"];
+		$status = TRUE;
 
 		$obj = $article->returnObject();
 
-		$file = new file();
+		$file = new c4_file();
 		$file->fallback($obj["id"], $_POST["files-fallback"]);
 	} else {
 		$textToPrint = $mdl_lang["add"]["failure"];
+		$status = FALSE;
 	}
 
-	$mdl = bo3::c2r(["content" => (isset($textToPrint)) ? $textToPrint : ""], bo3::mdl_load("templates/result.tpl"));
+	$mdl = bo3::c2r([
+		"content" => (isset($textToPrint)) ? $textToPrint : "",
+		"back-list" => $mdl_lang["result"]["back-list"],
+		"new-article" => $mdl_lang["result"]["new-article"],
+		"edit-mode" => $mdl_lang["result"]["edit-mode"],
+		"add-active" => $a != "add" ? "d-none" : "",
+		"edit-active" => $a != "edit" ? "d-none" : "",
+		"status" => ($status == TRUE) ? "success" : "danger"
+	], bo3::mdl_load("templates/result.tpl"));
 }
 
 bo3::importPlg ("files", ["module" => "article"]);

@@ -53,10 +53,9 @@ class c7_article {
 	public function insert() {
 		global $cfg, $db;
 
-		$query[0] = sprintf("INSERT INTO %s_7_articles (code, category_id, user_id, date, date_update, published) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')",
+		$query[0] = sprintf("INSERT INTO %s_7_articles (code, user_id, date, date_update, published) VALUES ('%s', '%s', '%s', '%s', '%s')",
 			$cfg->db->prefix,
 			$this->code,
-			$this->category_id,
 			$this->user_id,
 			$this->date,
 			$this->date_update,
@@ -76,6 +75,22 @@ class c7_article {
 				);
 
 				$db->query($query[1]);
+			}
+
+			if(is_array($this->category_id)) {
+				foreach ($this->category_id as $c => $cat) {
+
+					$query[2] = sprintf("INSERT INTO %s_8_categories_rel (category_id, object_id, module, date, date_update) VALUES ('%s', %s, '%s', '%s', '%s')",
+						$cfg->db->prefix,
+						$cat,
+						$this->id,
+						"article",
+						$this->date,
+						$this->date_update
+					);
+
+					$db->query($query[2]);
+				}
 			}
 
 			return true;
@@ -138,6 +153,32 @@ class c7_article {
 					}
 				}
 			}
+
+			if(is_array($this->category_id)) {
+				$current_cats = self::returnRelCategories($this->id);
+				$diff_del = array_diff($current_cats, $this->category_id);
+				$diff_insert = array_diff($this->category_id, $current_cats);
+
+				if(!empty($diff_insert)) {
+					foreach ($diff_insert as $d => $di) {
+						$query_insert = sprintf("INSERT INTO %s_8_categories_rel (category_id, object_id, module, date, date_update) VALUES ('%s', '%s', '%s', '%s', '%s')",
+							$cfg->db->prefix, $di, $this->id, "article", $this->date, $this->date_update
+						);
+
+						$db->query($query_insert);
+					}
+				}
+
+				if(!empty($diff_del)) {
+					foreach ($diff_del as $d => $dd) {
+						$query_del = sprintf("DELETE FROM %s_8_categories_rel WHERE category_id = %s AND object_id = %s AND module = '%s'",
+							$cfg->db->prefix, $dd, $this->id, "article"
+						);
+
+						$db->query($query_del);
+					}
+				}
+			}
 		}
 
 		return $toReturn;
@@ -146,7 +187,7 @@ class c7_article {
 	public function delete() {
 		global $cfg, $db, $authData;
 
-		$article = new article();
+		$article = new c7_article();
 		$article->setId($this->id);
 		$article_obj = $article->returnOneArticleAllLanguages();
 
@@ -165,6 +206,18 @@ class c7_article {
 				$cfg->db->prefix,
 				$this->id
 		);
+
+		$current_cats = self::returnRelCategories($this->id);
+
+		if(count($current_cats) > 0 && is_array($current_cats)) {
+			foreach ($current_cats as $c => $cats) {
+				$query_del = sprintf("DELETE FROM %s_8_categories_rel WHERE category_id = %s AND object_id = %s AND module = '%s'",
+					$cfg->db->prefix, $cats, $this->id, "article"
+				);
+
+				$db->query($query_del);
+			}
+		}
 
 		$db->query($query);
 
@@ -191,6 +244,21 @@ class c7_article {
 		$source = $db->query($query);
 
 		while ($data = $source->fetch_object()) {
+			$rel_array = [];
+
+			$query_rel = sprintf(
+				"SELECT * FROM %s_8_categories_rel WHERE object_id = %s",
+				$cfg->db->prefix, $data->id
+
+			);
+
+			$source_rel = $db->query($query_rel);
+
+			while ($data_rel = $source_rel->fetch_object()) {
+				array_push($rel_array, $data_rel->category_id);
+			}
+
+			$data->categories_rel = $rel_array;
 			array_push($toReturn, $data);
 		}
 		return $toReturn;
@@ -220,15 +288,18 @@ class c7_article {
 	public function returnArticlesByCategory($where = null, $order = null, $limit = null) {
 		global $cfg, $db;
 
-		$query = sprintf(
+	 	$query = sprintf(
 			"SELECT bc.*, bcl.title, bcl.text, bcl.lang_id
 				FROM %s_7_articles bc
 					INNER JOIN %s_7_articles_lang bcl on bcl.article_id = bc.id
-				WHERE (%s) AND bcl.lang_id = %s AND bc.category_id = %s
+					INNER JOIN %s_8_categories_rel rcl on rcl.object_id = bc.id
+				WHERE (%s) AND rcl.module = '%s' AND bcl.lang_id = %s AND rcl.category_id = %s
 				%s %s",
 			$cfg->db->prefix,
 			$cfg->db->prefix,
+			$cfg->db->prefix,
 			(!empty($where)) ? $where : "true",
+			"article",
 			$this->lang_id,
 			$this->category_id,
 			($order !== null) ? "ORDER BY {$order}" : null,
@@ -241,6 +312,21 @@ class c7_article {
 			$toReturn = [];
 
 			while ($data = $source->fetch_object()) {
+				$rel_array = [];
+
+				$query_rel = sprintf(
+					"SELECT * FROM %s_8_categories_rel WHERE object_id = %s",
+					$cfg->db->prefix, $data->id
+
+				);
+
+				$source_rel = $db->query($query_rel);
+
+				while ($data_rel = $source_rel->fetch_object()) {
+					array_push($rel_array, $data_rel->category_id);
+				}
+
+				$data->categories_rel = $rel_array;
 				array_push($toReturn, $data);
 			}
 
@@ -248,6 +334,29 @@ class c7_article {
 		}
 
 		return false;
+	}
+
+	public function returnRelCategories($id = null) {
+		global $cfg, $db;
+
+
+		if(isset($id) && !empty($id) && $id != 0) {
+			$query = sprintf("SELECT * FROM %s_8_categories_rel WHERE object_id = %s",
+				$cfg->db->prefix, $id
+			);
+
+			$source = $db->query($query);
+
+			$toReturn = [];
+
+			while ($data = $source->fetch_object()) {
+				array_push($toReturn, $data->category_id);
+			}
+
+			return $toReturn;
+		}
+
+		return FALSE;
 	}
 
 	// Returns one categories in all languages need category id. $this->id
@@ -267,6 +376,22 @@ class c7_article {
 
 		while ($data = $source->fetch_object()) {
 			// Push to index lang_id, the result of that row
+			$rel_array = [];
+
+			$query_rel = sprintf(
+				"SELECT * FROM %s_8_categories_rel WHERE object_id = %s",
+				$cfg->db->prefix, $this->id
+
+			);
+
+			$source_rel = $db->query($query_rel);
+
+			while ($data_rel = $source_rel->fetch_object()) {
+				array_push($rel_array, $data_rel->category_id);
+			}
+
+			$data->categories_rel = $rel_array;
+
 			$toReturn[$data->lang_id] = $data;
 		}
 
