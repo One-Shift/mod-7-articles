@@ -69,7 +69,7 @@ if (!isset($_POST["save"])){
 					],
 					$option_item_tpl
 				);
-				
+
 
 				if ($item->nr_sub_cats > 0) {
 					recursiveWayGet($item->id, $i);
@@ -94,12 +94,12 @@ if (!isset($_POST["save"])){
 				],
 				$option_item_tpl
 			);
-			
+
 			recursiveWayGet($item->id, 0);
 		}
 
 		$user_select = null;
-		$user_obj = new user();
+		$user_obj = new c9_user();
 		$user_list = $user_obj->returnAllUsers();
 
 		foreach ($user_list as $u) {
@@ -165,7 +165,8 @@ if (!isset($_POST["save"])){
 				"published" => $mdl_lang["label"]["published"],
 				"published-checked" => ($article_result[1]->published) ? "checked" : "",
 				"but-submit" => $mdl_lang["label"]["but-submit"],
-				"user-select" => $user_select
+				"user-select" => $user_select,
+				"val-array" => json_encode($article_result[1]->categories_rel)
 			],
 			bo3::mdl_load("templates/add.tpl")
 		);
@@ -187,11 +188,22 @@ if (!isset($_POST["save"])){
 
 	if ($article->update()) {
 		$textToPrint = $mdl_lang["add"]["success"];
+		$status = TRUE;
 	} else {
 		$textToPrint = $mdl_lang["add"]["failure"];
+		$status = FALSE;
 	}
 
-	$mdl = bo3::c2r(["content" => (isset($textToPrint)) ? $textToPrint : ""], bo3::mdl_load("templates/result.tpl"));
+	$mdl = bo3::c2r([
+		"content" => (isset($textToPrint)) ? $textToPrint : "",
+		"add-active" => $a != "add" ? "d-none" : "",
+		"edit-active" => $a != "edit" ? "d-none" : "",
+		"back-list" => $mdl_lang["result"]["back-list"],
+		"new-article" => $mdl_lang["result"]["new-article"],
+		"edit-mode" => $mdl_lang["result"]["edit-mode"],
+		"id" => $id,
+		"status" => ($status == TRUE) ? "success" : "danger"
+	], bo3::mdl_load("templates/result.tpl"));
 }
 
 bo3::importPlg ("files", ["id" => $id, "module" => "article"]);

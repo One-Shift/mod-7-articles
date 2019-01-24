@@ -1,5 +1,7 @@
 $(document).ready(function() {
 
+	$('.selectpicker').selectpicker();
+
 	$(".switch").click(function(evt){
 		evt.preventDefault();
 		var item = $(this);
