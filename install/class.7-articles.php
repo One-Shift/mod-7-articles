@@ -25,9 +25,11 @@ class c7_article {
 		$this->category_id = $ci;
 	}
 
-	public function setContent($t, $d) {
+	public function setContent($t, $txt, $d, $k) {
 		$this->title = $t;
+		$this->text = $txt;
 		$this->description = $d;
+		$this->keywords = $k;
 	}
 
 	public function setCode($c) {
@@ -66,12 +68,14 @@ class c7_article {
 			$this->id = $db->insert_id;
 
 			foreach ($this->title as $i => $item) {
-				$query[1] = sprintf("INSERT INTO %s_7_articles_lang (article_id, lang_id, title, text) VALUES (%s, %s, '%s', '%s')",
+				$query[1] = sprintf("INSERT INTO %s_7_articles_lang (article_id, lang_id, title, text, `meta-keywords`, `meta-description`) VALUES (%s, %s, '%s', '%s', '%s', '%s')",
 					$cfg->db->prefix,
 					$this->id,
 					$i+1,
 					$db->real_escape_string($this->title[$i]),
-					$db->real_escape_string($this->description[$i])
+					$db->real_escape_string($this->text[$i]),
+					$db->real_escape_string($this->description[$i]),
+					$db->real_escape_string($this->keywords[$i])
 				);
 
 				$db->query($query[1]);
@@ -131,10 +135,12 @@ class c7_article {
 					$fast_source = $db->query($fast_query);
 
 					if ($fast_source->num_rows > 0) {
-						$query[$index] = sprintf("UPDATE %s_7_articles_lang SET title = '%s', text = '%s' WHERE article_id = '%s' AND lang_id = '%s'",
+						$query[$index] = sprintf("UPDATE %s_7_articles_lang SET title = '%s', text = '%s', `meta-keywords` = '%s', `meta-description` = '%s' WHERE article_id = '%s' AND lang_id = '%s'",
 							$cfg->db->prefix,
 							$db->real_escape_string($this->title[$index-1]),
 							$db->real_escape_string($this->description[$index-1]),
+							$db->real_escape_string($this->description[$index-1]),
+							$db->real_escape_string($this->keywords[$index-1]),
 							$this->id,
 							$index
 						);
@@ -145,8 +151,10 @@ class c7_article {
 							$cfg->db->prefix,
 							$this->id,
 							$index,
-							$db->real_escape_string($this->title[$index - 1]),
-							$db->real_escape_string($this->description[$index - 1])
+							$db->real_escape_string($this->title[$index-1]),
+							$db->real_escape_string($this->description[$index-1]),
+							$db->real_escape_string($this->description[$index-1]),
+							$db->real_escape_string($this->keywords[$index-1])
 						);
 
 						$db->query($query[1]);
@@ -254,13 +262,17 @@ class c7_article {
 
 			$source_rel = $db->query($query_rel);
 
-			while ($data_rel = $source_rel->fetch_object()) {
-				array_push($rel_array, $data_rel->category_id);
+			if($source_rel->num_rows > 0) {
+				while ($data_rel = $source_rel->fetch_object()) {
+					array_push($rel_array, $data_rel->category_id);
+				}
+
+				$data->categories_rel = $rel_array;
 			}
 
-			$data->categories_rel = $rel_array;
 			array_push($toReturn, $data);
 		}
+
 		return $toReturn;
 	}
 
@@ -268,7 +280,7 @@ class c7_article {
 	public function returnOneArticle() {
 		global $cfg, $db;
 
-		$query = sprintf("SELECT bc.*, bcl.title, bcl.text
+		$query = sprintf("SELECT bc.*, bcl.title, bcl.text, bcl.`meta-keywords`, bcl.`meta-description`
 			FROM %s_7_articles bc
 				INNER JOIN %s_7_articles_lang bcl on bcl.article_id = bc.id
 			WHERE bc.id = %s and bcl.lang_id = %s",
@@ -289,7 +301,7 @@ class c7_article {
 		global $cfg, $db;
 
 	 	$query = sprintf(
-			"SELECT bc.*, bcl.title, bcl.text, bcl.lang_id
+			"SELECT bc.*, bcl.title, bcl.text, bcl.`meta-keywords`, bcl.`meta-description`, bcl.lang_id
 				FROM %s_7_articles bc
 					INNER JOIN %s_7_articles_lang bcl on bcl.article_id = bc.id
 					INNER JOIN %s_8_categories_rel rcl on rcl.object_id = bc.id
@@ -363,7 +375,7 @@ class c7_article {
 	public function returnOneArticleAllLanguages() {
 		global $cfg, $db;
 
-		$query = sprintf("SELECT bc.*, bcl.title, bcl.text, bcl.lang_id
+		$query = sprintf("SELECT bc.*, bcl.title, bcl.text, bcl.`meta-keywords`, bcl.`meta-description`, bcl.lang_id
 			FROM %s_7_articles bc
 				INNER JOIN %s_7_articles_lang bcl on bcl.article_id = bc.id
 			WHERE bc.id = %s",

@@ -21,7 +21,7 @@ if (!isset($_POST["save"])){
 			if ($lg[0]) {
 				$tabs .= bo3::c2r(
 					[
-						"class" => ($i == 0) ? "active" : "",
+						"class" => ($i == 0) ? "show active" : "",
 						"nr" => $index,
 						"lang-name" => $lg[2]
 					],
@@ -33,11 +33,15 @@ if (!isset($_POST["save"])){
 						"class" => ($i == 0) ? "show active" : "",
 						"nr" => $index,
 						"label-name" => $mdl_lang["label"]["name"],
-						"label-description" => $mdl_lang["label"]["description"],
+						"label-content" => $mdl_lang["label"]["content"],
+						"label-meta-keywords" => $mdl_lang["label"]["meta-keywords"],
+						"label-meta-description" => $mdl_lang["label"]["meta-description"],
 						"place-holder-name" => "",
 						"place-holder-text" => "",
 						"name-value" => (isset($article_result[$index]->title)) ? htmlspecialchars($article_result[$index]->title) : "",
-						"description-value" => (isset($article_result[$index]->text)) ? $article_result[$index]->text : ""
+						"content-value" => (isset($article_result[$index]->text)) ? $article_result[$index]->text : "",
+						"meta-keywords-value" => (isset($article_result[$index]->{"meta-keywords"})) ? htmlspecialchars($article_result[$index]->{"meta-keywords"}) : "",
+						"meta-description-value" => (isset($article_result[$index]->{"meta-description"})) ? $article_result[$index]->{"meta-description"} : ""
 					],
 					$nav_content_tpl
 				);
@@ -178,8 +182,8 @@ if (!isset($_POST["save"])){
 	$article = new c7_article();
 
 	$article->setId($id);
-	$article->setContent($_POST["name"], $_POST["description"]);
-	$article->setCategoryId($_POST["category-parent"]);
+	$article->setContent($_POST["name"], $_POST["content"], $_POST["meta-keywords"], $_POST["meta-description"]);
+	$article->setCategoryId(isset($_POST["category-parent"]) ? $_POST["category-parent"] : 0);
 	$article->setCode($_POST["code"]);
 	$article->setDate($_POST["date"]);
 	$article->setDateUpdate();

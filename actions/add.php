@@ -26,6 +26,8 @@ if (!isset($_POST["save"])) {
 					"nr" => $index,
 					"label-title" => $mdl_lang["label"]["title"],
 					"label-content" => $mdl_lang["label"]["content"],
+					"label-meta-keywords" => $mdl_lang["label"]["meta-keywords"],
+					"label-meta-description" => $mdl_lang["label"]["meta-description"],
 					"placeholder-title" => $mdl_lang["label"]["placeholder-title"],
 					"placeholder-text" => $mdl_lang["label"]["placeholder-text"],
 					"lang-name" => $lg[2]
@@ -106,8 +108,8 @@ if (!isset($_POST["save"])) {
 } else {
 	$article = new c7_article();
 
-	$article->setContent($_POST["title"], $_POST["content"]);
-	$article->setCategoryId($_POST["category-parent"]);
+	$article->setContent($_POST["title"], $_POST["content"], $_POST["meta-keywords"], $_POST["meta-description"]);
+	$article->setCategoryId(isset($_POST["category-parent"]) ? $_POST["category-parent"] : 0);
 	$article->setCode($_POST["code"]);
 	$article->setDate($_POST["date"]);
 	$article->setDateUpdate();

@@ -16,6 +16,8 @@ CREATE TABLE `{c2r-prefix}_7_articles_lang` (
 	`lang_id` int(11) NOT NULL,
 	`title` varchar(255) NOT NULL,
 	`text` text NOT NULL
+	`meta-keywords` text NOT NULL
+	`meta-description` text NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 ALTER TABLE `{c2r-prefix}_7_articles`
