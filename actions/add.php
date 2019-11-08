@@ -82,7 +82,7 @@ if (!isset($_POST["save"])) {
 
 	$mdl = bo3::c2r(
 		[
-			"content" => bo3::mdl_load("templates-e/add/form.tpl"),
+			//"content" => bo3::mdl_load("templates-e/add/form.tpl"),
 
 			"tabs-categories-name-description" => bo3::mdl_load("templates-e/add/tabs.tpl"),
 
