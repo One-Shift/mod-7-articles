@@ -106,6 +106,10 @@ if(!isset($list)) {
 	$message = bo3::c2r(["message" => $mdl_lang["message"]["empty"]], bo3::mdl_load("templates/message.tpl"));
 }
 
+$mdl_action_list = bo3::c2r([
+	"label-add-article" => $mdl_lang["label"]["add-article"]
+], bo3::mdl_load("templates-e/action-list.tpl"));
+
 
 $mdl = bo3::c2r([
 	"label-add-category" => $mdl_lang["label"]["add-category"],
