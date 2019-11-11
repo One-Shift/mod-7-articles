@@ -52,7 +52,7 @@
 	</div>
 	<div class="row">
 		<div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 tacenter">
-			<button type="submit" class="btn btn-submit btn-success btn-block" name="save"><i class="fas fa-save"></i><span class="block all-15"></span>{c2r-but-submit}</button>
+			<button type="submit" class="au-btn au-btn-icon au-btn--green au-btn--block" name="save"><i class="fas fa-save"></i><span class="block all-15"></span>{c2r-but-submit}</button>
 			<div class="spacer all-30"></div>
 		</div>
 	</div>

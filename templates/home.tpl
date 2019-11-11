@@ -1,9 +1,9 @@
 <div class="articles">
 	<div class="spacer all-15"></div>
 	<div class="row">
-		<div class="col-12 col-sm-12 col-md-4">
+		<div class="col-12 col-sm-12 col-md-5">
 			<form name="sel-category" action="" method="post" class="w-100">
-				<div class="col-6 col-sm-6 col-md-8 taleft float-left">
+				<div class="col-6 col-sm-6 col-md-7 taleft float-left">
 					<div class="form-group">
 						<select name="categoryId" class="form-control">
 							<option value="-1" selected>{c2r-category-filter-select}</option>
@@ -11,8 +11,8 @@
 						</select>
 					</div>
 				</div>
-				<div class="col-6 col-sm-6 col-md-4 taleft float-left">
-					<button type="submit" class="btn btn-primary" name="filterCategory"><i class="fas fa-filter"></i><div class="block all-15"></div>Filter</button>
+				<div class="col-6 col-sm-6 col-md-5 taleft float-left">
+					<button type="submit" class="au-btn au-btn-icon au-btn--default" name="filterCategory"><i class="fas fa-filter"></i><div class="block all-15"></div>Filter</button>
 				</div>
 			</form>
 		</div>
