@@ -1,12 +1,9 @@
-<style>
-	.table > tbody > tr > td { vertical-align: middle; }
-</style>
-<div id="articles" class="row">
-	<div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
-		<div class="spacer all-15"></div>
-		<div class="row">
+<div class="articles">
+	<div class="spacer all-15"></div>
+	<div class="row">
+		<div class="col-12 col-sm-12 col-md-5">
 			<form name="sel-category" action="" method="post" class="w-100">
-				<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 taleft float-left">
+				<div class="col-6 col-sm-6 col-md-7 taleft float-left">
 					<div class="form-group">
 						<select name="categoryId" class="form-control">
 							<option value="-1" selected>{c2r-category-filter-select}</option>
@@ -14,49 +11,56 @@
 						</select>
 					</div>
 				</div>
-				<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 taleft float-left">
-					<button type="submit" class="btn btn-primary" name="filterCategory"><i class="fas fa-filter"></i><div class="block all-15"></div>Filter</button>
+				<div class="col-6 col-sm-6 col-md-5 taleft float-left">
+					<button type="submit" class="au-btn au-btn-icon au-btn--default" name="filterCategory"><i class="fas fa-filter"></i><div class="block all-15"></div>Filter</button>
+				</div>
+			</form>
+		</div>
+		<div class="col-12 col-sm-12 col-md-2">
+			<form name="sel-per-page" class="" action="" method="get">
+				<div class="input-group">
+					<label for="per-page-selector">Per Page</label>
+					<div class="block all-15"></div>
+					<select id="per-page-selector" name="per-page" class="">
+						<option selected value="25">25</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+					</select>
 				</div>
 			</form>
 		</div>
 	</div>
-	<div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 taright">
-		<div class="spacer all-15"></div>
-		<a href="{c2r-mdl-url}add/" class="btn btn-success btn-action" role="button">
-			<i class="fas fa-plus" aria-hidden="true"></i><span class="block all-15"></span>{c2r-label-add-category}
-		</a>
-	</div>
-</div>
-<div class="spacer sm-30"></div>
-<div class="row">
-	<div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-		<div class="line-header d-none d-xl-flex row">
-			<div class="col-sm-11">
-				<div class="row">
-					<div class="block col-sm-1 tacenter">
-						<strong>#</strong>
-					</div>
-					<div class="block col-sm-3">
-						<strong>{c2r-name}</strong>
-					</div>
-					<div class="block col-sm-5">
-						<strong>{c2r-category}</strong>
-					</div>
-					<div class="block col-sm-1 tacenter">
-						<strong>{c2r-published}</strong>
-					</div>
-					<div class="block col-sm-2 tacenter">
-						<strong>{c2r-date}</strong>
-					</div>
-				</div>
-			</div>
-			<div class="block col-sm-1 tacenter">
-				<strong>Actions</strong>
-			</div>
+	<div class="spacer sm-30"></div>
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-data2">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>{c2r-name}</th>
+						<th>{c2r-category}</th>
+						<th>{c2r-published}</th>
+						<th>{c2r-date}</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					{c2r-list}
+				</tbody>
+			</table>
 		</div>
-		{c2r-list}
+	</div>
+	<div class="spacer all-30"></div>
+	<div class="row">
+		<div class="col-12 tacenter">
+			<p>Pagination goes here</p>
+		</div>
 	</div>
 </div>
+
+<style>
+	.table > tbody > tr > td { vertical-align: middle; }
+</style>
 
 <script src="{c2r-mdl-path}/site-assets/js/script.js" charset="utf-8"></script>
 <link rel="stylesheet" href="{c2r-mdl-path}/site-assets/css/style.css">

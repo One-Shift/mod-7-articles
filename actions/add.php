@@ -82,7 +82,7 @@ if (!isset($_POST["save"])) {
 
 	$mdl = bo3::c2r(
 		[
-			"content" => bo3::mdl_load("templates-e/add/form.tpl"),
+			//"content" => bo3::mdl_load("templates-e/add/form.tpl"),
 
 			"tabs-categories-name-description" => bo3::mdl_load("templates-e/add/tabs.tpl"),
 
@@ -113,8 +113,8 @@ if (!isset($_POST["save"])) {
 	$article->setCode($_POST["code"]);
 	$article->setDate($_POST["date"]);
 	$article->setDateUpdate();
-	$article->setPublished(isset($_POST["published"]) ? $_POST["published"] : 0);
-	$article->setUserId($authData["id"]);
+	$article->setStatus(isset($_POST["published"]) ? $_POST["published"] : 0);
+	$article->setUserId($authData->id);
 
 	if ($article->insert()) {
 		$textToPrint = $mdl_lang["add"]["success"];

@@ -111,7 +111,7 @@ if (!isset($_POST["save"])){
 				$user_options = "";
 			}
 
-			if($authData["rank"] == "owner"){
+			if($authData->rank == "owner"){
 				$user_options .= bo3::c2r(
 					[
 						"option-id" => $u->id,
@@ -142,13 +142,9 @@ if (!isset($_POST["save"])){
 			$user_select_tpl
 		);
 
-
-
 		$mdl = bo3::c2r(
 			[
-				"content" => bo3::mdl_load("templates-e/edit/form.tpl"),
-
-				"tabs-categories-name-description" => bo3::mdl_load("templates-e/edit/tabs.tpl"),
+				"tabs-article-content" => bo3::mdl_load("templates-e/edit/tabs.tpl"),
 
 				"nav-tabs-items" => $tabs,
 				"tab-content-items" => $nav_content,
@@ -172,7 +168,7 @@ if (!isset($_POST["save"])){
 				"user-select" => $user_select,
 				"val-array" => json_encode($article_result[1]->categories_rel)
 			],
-			bo3::mdl_load("templates/add.tpl")
+			bo3::mdl_load("templates/edit.tpl")
 		);
 	} else {
 		// if doesn't exist an action response, system sent you to 404
@@ -183,11 +179,11 @@ if (!isset($_POST["save"])){
 
 	$article->setId($id);
 	$article->setContent($_POST["name"], $_POST["content"], $_POST["meta-keywords"], $_POST["meta-description"]);
-	$article->setCategoryId(isset($_POST["category-parent"]) ? $_POST["category-parent"] : 0);
+	$article->setCategories(isset($_POST["category-parent"]) ? $_POST["category-parent"] : 0);
 	$article->setCode($_POST["code"]);
 	$article->setDate($_POST["date"]);
 	$article->setDateUpdate();
-	$article->setPublished(isset($_POST["published"]) ? $_POST["published"] : 0);
+	$article->setStatus(isset($_POST["published"]) ? $_POST["published"] : 0);
 	$article->setUserId($_POST["article-user"]);
 
 	if ($article->update()) {
