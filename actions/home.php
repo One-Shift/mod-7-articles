@@ -112,7 +112,6 @@ $mdl_action_list = bo3::c2r([
 
 
 $mdl = bo3::c2r([
-	"label-add-category" => $mdl_lang["label"]["add-category"],
 	"category-filter-select" => $mdl_lang["label"]["category-filter-select"],
 	"filter-options" => (isset($categories_list)) ? $categories_list : "",
 	"name" => $mdl_lang["label"]["name"],

@@ -113,8 +113,8 @@ if (!isset($_POST["save"])) {
 	$article->setCode($_POST["code"]);
 	$article->setDate($_POST["date"]);
 	$article->setDateUpdate();
-	$article->setPublished(isset($_POST["published"]) ? $_POST["published"] : 0);
-	$article->setUserId($authData["id"]);
+	$article->setStatus(isset($_POST["published"]) ? $_POST["published"] : 0);
+	$article->setUserId($authData->id);
 
 	if ($article->insert()) {
 		$textToPrint = $mdl_lang["add"]["success"];
