@@ -1,6 +1,6 @@
 <tr>
     <td>{{ id }}</td>
-    <td>{{ title  }}</td>
+    <td>{{ title }}</td>
     <td>{{ category-section }}</td>
     <td>{{ parent-nr }}</td>
     <td>{{ published }}</td>

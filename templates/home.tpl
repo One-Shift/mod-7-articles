@@ -59,7 +59,7 @@
 </div>
 
 <style>
-	.table > tbody > tr > td { vertical-align: middle; }
+	.table > tbody > tr > td { vertical-align: middle;  }}
 </style>
 
 <script src="{{ mdl-path }}/site-assets/js/script.js" charset="utf-8"></script>

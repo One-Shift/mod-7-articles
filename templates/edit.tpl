@@ -67,7 +67,7 @@
 	$(document).ready(function() {
 		$('.selectpicker').val('val', {{ val-array }});
 		$('.selectpicker').selectpicker('val', {{ val-array }});
-	});
+	 }});
 </script>
 
 <script src="{{ mdl-path }}/site-assets/js/script.js" charset="utf-8"></script>

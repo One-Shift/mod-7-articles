@@ -5,7 +5,7 @@
 	background-color: #fff !important;
 	outline: 0 !important;
 	box-shadow: none !important;
-}
+ }}
 </style>
 <form name="add-category" action="" method="post">
 	<div class="row">
@@ -23,7 +23,7 @@
 				<label for="inputParent">{{ parent }}</label>
 				<select name="category-parent[]" id="inputParent" class="selectpicker bo3-form-control form-control" multiple data-live-search="true">
 					<!-- <option value="-1" disabled selected>{{ select-option-parent }}</option>
-					<option value="-1">{{ select-option-parent-no}</option> -->
+					<option value="-1">{{ select-option-parent-no }}</option> -->
 					{{ parent-options }}
 				</select>
 			</div>
@@ -68,7 +68,7 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$('.selectpicker').val('val', {{ val-array }});
-		$('.selectpicker').selectpicker('val', {{ val-array }});
+		$('.selectpicker').val('val', {c2r-val-array});
+		$('.selectpicker').selectpicker('val', {c2r-val-array});
 	});
 </script>
