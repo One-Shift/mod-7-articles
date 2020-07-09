@@ -6,8 +6,8 @@
 				<div class="col-6 col-sm-6 col-md-7 taleft float-left">
 					<div class="form-group">
 						<select name="categoryId" class="form-control">
-							<option value="-1" selected>{c2r-category-filter-select}</option>
-							{c2r-filter-options}
+							<option value="-1" selected>{{ category-filter-select }}</option>
+							{{ filter-options }}
 						</select>
 					</div>
 				</div>
@@ -37,15 +37,15 @@
 				<thead>
 					<tr>
 						<th>#</th>
-						<th>{c2r-name}</th>
-						<th>{c2r-category}</th>
-						<th>{c2r-published}</th>
-						<th>{c2r-date}</th>
+						<th>{{ name }}</th>
+						<th>{{ category }}</th>
+						<th>{{ published }}</th>
+						<th>{{ date }}</th>
 						<th></th>
 					</tr>
 				</thead>
 				<tbody>
-					{c2r-list}
+					{{ list }}
 				</tbody>
 			</table>
 		</div>
@@ -62,5 +62,5 @@
 	.table > tbody > tr > td { vertical-align: middle; }
 </style>
 
-<script src="{c2r-mdl-path}/site-assets/js/script.js" charset="utf-8"></script>
-<link rel="stylesheet" href="{c2r-mdl-path}/site-assets/css/style.css">
+<script src="{{ mdl-path }}/site-assets/js/script.js" charset="utf-8"></script>
+<link rel="stylesheet" href="{{ mdl-path }}/site-assets/css/style.css">
