@@ -1,1 +1,1 @@
-<option value="{c2r-option-id}">{c2r-option}</option>
+<option value="{{ option-id }}">{{ option }}</option>
