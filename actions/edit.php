@@ -38,10 +38,10 @@ if (!isset($_POST["save"])){
 						"label-meta-description" => $mdl_lang["label"]["meta-description"],
 						"place-holder-name" => "",
 						"place-holder-text" => "",
-						"name-value" => (isset($article_result[$index]->title)) ? htmlspecialchars($article_result[$index]->title) : "",
-						"content-value" => (isset($article_result[$index]->text)) ? $article_result[$index]->text : "",
-						"meta-keywords-value" => (isset($article_result[$index]->{"meta-keywords"})) ? htmlspecialchars($article_result[$index]->{"meta-keywords"}) : "",
-						"meta-description-value" => (isset($article_result[$index]->{"meta-description"})) ? $article_result[$index]->{"meta-description"} : ""
+						"name-value" => (isset($article_result[$lg[1]]->title)) ? htmlspecialchars($article_result[$lg[1]]->title) : "",
+						"content-value" => (isset($article_result[$lg[1]]->text)) ? $article_result[$lg[1]]->text : "",
+						"meta-keywords-value" => (isset($article_result[$lg[1]]->{"meta-keywords"})) ? htmlspecialchars($article_result[$lg[1]]->{"meta-keywords"}) : "",
+						"meta-description-value" => (isset($article_result[$lg[1]]->{"meta-description"})) ? $article_result[$lg[1]]->{"meta-description"} : ""
 					],
 					$nav_content_tpl
 				);
@@ -56,10 +56,10 @@ if (!isset($_POST["save"])){
 		/*------------------------------------------*/
 
 		function recursiveWayGet($id, $i){
-			global $parent_options, $option_item_tpl, $article_result;
+			global $parent_options, $option_item_tpl, $article_result, $lg_s, $cfg;
 
 			$a = new c8_category();
-			$a->setLangId(1);
+			$a->setLangId($lg_s);
 			$a->setParentId($id);
 			$a = $a->returnChildCategories();
 			$i++;
@@ -69,7 +69,7 @@ if (!isset($_POST["save"])){
 					[
 						"option-id" => $item->id,
 						"option" => sprintf("%s> %s", str_repeat("-", $i), $item->title),
-						"selected" => ($item->id == $article_result[1]->category_id) ? "selected" : ""
+						"selected" => isset($article_result[$cfg->lg[1][1]]->categories_rel) &&  in_array($item->id, $article_result[$cfg->lg[1][1]]->categories_rel) ? "selected" : ""
 					],
 					$option_item_tpl
 				);
@@ -82,7 +82,7 @@ if (!isset($_POST["save"])){
 		}
 
 		$mainCategories = new c8_category();
-		$mainCategories->setLangId(1);
+		$mainCategories->setLangId($lg_s);
 		$allCats = $mainCategories->returnAllMainCategories();
 
 		foreach ($allCats as $item) {
@@ -94,7 +94,7 @@ if (!isset($_POST["save"])){
 				[
 					"option-id" => $item->id,
 					"option" => $item->title,
-					"selected" => ($item->id == $article_result[1]->category_id) ? "selected" : ""
+					"selected" => isset($article_result[$cfg->lg[1][1]]->categories_rel) &&  in_array($item->id, $article_result[$cfg->lg[1][1]]->categories_rel) ? "selected" : ""
 				],
 				$option_item_tpl
 			);
@@ -116,17 +116,17 @@ if (!isset($_POST["save"])){
 					[
 						"option-id" => $u->id,
 						"option" => $u->username,
-						"selected" => ($u->id == $article_result[1]->user_id) ? "selected" : ""
+						"selected" => ($u->id == $article_result[$cfg->lg[1][1]]->user_id) ? "selected" : ""
 					],
 					$option_item_tpl
 				);
 			} else {
-				if($u->id == $article_result[1]->user_id) {
+				if($u->id == $article_result[$cfg->lg[1][1]]->user_id) {
 					$user_options = bo3::c2r(
 						[
 							"option-id" => $u->id,
 							"option" => $u->username,
-							"selected" => ($u->id == $article_result[1]->user_id) ? "selected" : ""
+							"selected" => ($u->id == $article_result[$cfg->lg[1][1]]->user_id) ? "selected" : ""
 						],
 						$option_item_tpl
 					);
@@ -154,19 +154,19 @@ if (!isset($_POST["save"])){
 				"parent" => $mdl_lang["label"]["parent"],
 				"select-option-parent" => $mdl_lang["form"]["option-parent"],
 				"select-option-parent-no" => $mdl_lang["form"]["option-parent-no"],
-				"selected" => ($article_result[1]->category_id == -1) ? "selected" : "",
+				"selected" => ($article_result[$cfg->lg[1][1]]->category_id == -1) ? "selected" : "",
 				"parent-options" => (isset($parent_options)) ? $parent_options : "",
 				"date" => $mdl_lang["label"]["date"],
 				"date-placeholder" => $mdl_lang["form"]["date-placeholder"],
-				"date-value" => $article_result[1]->date,
+				"date-value" => $article_result[$cfg->lg[1][1]]->date,
 				"code" => $mdl_lang["label"]["code"],
 				"code-placeholder" => $mdl_lang["label"]["code-placeholder"],
-				"code-value" => $article_result[1]->code,
+				"code-value" => $article_result[$cfg->lg[1][1]]->code,
 				"published" => $mdl_lang["label"]["published"],
-				"published-checked" => ($article_result[1]->published) ? "checked" : "",
+				"published-checked" => ($article_result[$cfg->lg[1][1]]->published) ? "checked" : "",
 				"but-submit" => $mdl_lang["label"]["but-submit"],
 				"user-select" => $user_select,
-				"val-array" => json_encode($article_result[1]->categories_rel)
+				"val-array" => isset($article_result[$cfg->lg[1][1]]->categories_rel) ? json_encode($article_result[$cfg->lg[1][1]]->categories_rel) : ""
 			],
 			bo3::mdl_load("templates/edit.tpl")
 		);
@@ -182,7 +182,6 @@ if (!isset($_POST["save"])){
 	$article->setCategories(isset($_POST["category-parent"]) ? $_POST["category-parent"] : 0);
 	$article->setCode($_POST["code"]);
 	$article->setDate($_POST["date"]);
-	$article->setDateUpdate();
 	$article->setStatus(isset($_POST["published"]) ? $_POST["published"] : 0);
 	$article->setUserId($_POST["article-user"]);
 

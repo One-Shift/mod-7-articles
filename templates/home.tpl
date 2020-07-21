@@ -17,7 +17,7 @@
 			</form>
 		</div>
 		<div class="col-12 col-sm-12 col-md-2">
-			<form name="sel-per-page" class="" action="" method="get">
+			<!-- <form name="sel-per-page" class="" action="" method="get">
 				<div class="input-group">
 					<label for="per-page-selector">Per Page</label>
 					<div class="block all-15"></div>
@@ -27,7 +27,7 @@
 						<option value="100">100</option>
 					</select>
 				</div>
-			</form>
+			</form> -->
 		</div>
 	</div>
 	<div class="spacer sm-30"></div>
@@ -53,7 +53,7 @@
 	<div class="spacer all-30"></div>
 	<div class="row">
 		<div class="col-12 tacenter">
-			<p>Pagination goes here</p>
+			<p>--</p>
 		</div>
 	</div>
 </div>

@@ -26,7 +26,7 @@
 			], bo3::mdl_load("templates/result.tpl"));
 
 		} else {
-			$article->setLangId($lg);
+			$article->setLangId($lg_s);
 			$article = $article->returnOneArticle();
 
 			$toReturn = bo3::c2r(

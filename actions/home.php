@@ -6,9 +6,10 @@ $option_item_tpl = bo3::mdl_load("templates-e/home/option-item.tpl");
 
 /*------------------------------------------*/
 function recursiveWayGet($id, $i = 0, &$data = []) {
-	global $lg;
+	global $lg_s;
+	
 	$a = new c8_category();
-	$a->setLangId($lg);
+	$a->setLangId($lg_s);
 	$a->setParentId($id);
 	$a = $a->returnChildCategories();
 
@@ -44,7 +45,7 @@ if(!empty($data)) {
 /*------------------------------------------*/
 
 $articles = new c7_article();
-$articles->setLangId($lg);
+$articles->setLangId($lg_s);
 
 if(isset($_POST["filterCategory"]) && !empty($_POST["categoryId"]) && $_POST["categoryId"] != "-1") {
 	$articles->setCategoryId($_POST["categoryId"]);
@@ -53,10 +54,7 @@ if(isset($_POST["filterCategory"]) && !empty($_POST["categoryId"]) && $_POST["ca
 	$articles = $articles->returnAllArticles();
 }
 
-$category = new c8_category();
-$category->setLangId($lg);
-
-if(count($articles) > 0 && is_array($articles)) {
+if(is_array($articles) && count($articles) > 0) {
 	foreach ($articles as $article) {
 		if (!isset($table_items)) {
 			$table_items = "";
@@ -71,7 +69,7 @@ if(count($articles) > 0 && is_array($articles)) {
 		if(!empty($article->categories_rel) && is_array($article->categories_rel)) {
 			foreach ($article->categories_rel as $c => $cat) {
 				$category = new c8_category();
-				$category->setLangId($lg);
+				$category->setLangId($lg_s);
 				$category->setId($cat);
 				$this_category = $category->returnOneCategory();
 
@@ -83,9 +81,6 @@ if(count($articles) > 0 && is_array($articles)) {
 
 			}
 		}
-
-		$category->setId($article->category_id);
-		$this_category = $category->returnOneCategory();
 
 		$list .= bo3::c2r([
 			"id" => $article->id,
