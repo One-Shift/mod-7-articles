@@ -261,7 +261,7 @@ class c7_article {
 			"SELECT bc.*, bcl.title, bc.id
 				FROM %s_7_articles bc
 					INNER JOIN %s_7_articles_lang bcl on bcl.article_id = bc.id
-				WHERE bcl.lang_id = %s
+				WHERE bcl.lang_id = '%s'
 				ORDER BY bc.date ASC, bcl.title ASC",
 				$cfg->db->prefix, $cfg->db->prefix, $this->lang_id
 		));
