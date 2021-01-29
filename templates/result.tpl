@@ -9,7 +9,7 @@
 	<div class="col tacenter">
 		<a href="{{ mdl-url }}" class="au-btn au-btn-icon au-btn--default"><i class="fas fa-undo"></i> {{ back-list }}</a>
 		<div class="block all-15"></div>
-		<a href="{{ mdl-url }}add" class="au-btn au-btn-icon au-btn--default {{ add-active }}"><i class="fas fa-plus"></i> {{ new-article }}</a>
+		<a href="{{ mdl-url }}add/" class="au-btn au-btn-icon au-btn--default {{ add-active }}"><i class="fas fa-plus"></i> {{ new-article }}</a>
 		<a href="{{ mdl-url }}edit/{{ id }}" class="au-btn au-btn-icon au-btn--yellow {{ edit-active }}"><i class="fas fa-edit"></i> {{ edit-mode }}</a>
 	</div>
 </div>
