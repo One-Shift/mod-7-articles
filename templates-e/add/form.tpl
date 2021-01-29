@@ -39,7 +39,6 @@
 			<!-- Category Code -->
 			<div class="spacer all-15"></div>
 			<div class="form-group">
-				<input name="files-fallback" id="files-fallback" type="text" class="bo3-form-control form-control" readonly="readonly">
 				<input name="files-fallback" id="files-fallback" type="hidden" class="bo3-form-control form-control">
 			</div>
 			<!-- END Category Code -->
