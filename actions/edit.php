@@ -182,7 +182,7 @@ if (!isset($_POST["save"])){
 	$article->setCategories(isset($_POST["category-parent"]) ? $_POST["category-parent"] : 0);
 	$article->setCode($_POST["code"]);
 	$article->setDate($_POST["date"]);
-	$article->setStatus(isset($_POST["published"]) ? $_POST["published"] : 0);
+	$article->setPublished(isset($_POST["published"]) ? $_POST["published"] : 0);
 	$article->setUserId($_POST["article-user"]);
 
 	if ($article->update()) {
