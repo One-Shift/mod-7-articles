@@ -21,7 +21,7 @@ class c7_article {
 	protected $user_id; /** @var int **/
 	protected $date; /** @var DateTime **/
 	protected $date_update; /** @var DateTime **/
-	protected $status = false; /** @var boolean **/
+	protected $published = false; /** @var boolean **/
 
 	public function __construct() {}
 
@@ -60,7 +60,7 @@ class c7_article {
 	public function setDateUpdate($d = null) {$this->date_update = ($d !== null) ? $d : date("Y-m-d H:i:s", time());}
 
 	/** @param boolean **/
-	public function setStatus($s) {$this->status = $s;}
+	public function setPublished($s) {$this->published = $s;}
 
 	/** [Insert new article in DB] @return boolean */
 	public function insert() {
@@ -128,7 +128,7 @@ class c7_article {
 			$this->code,
 			$this->date,
 			$this->date_update,
-			$this->status,
+			$this->published,
 			$authData->id,
 			$this->id
 		))) {
