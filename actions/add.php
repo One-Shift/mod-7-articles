@@ -14,7 +14,7 @@ if (!isset($_POST["save"])) {
 			$tabs .= bo3::c2r(
 				[
 					"class" => ($i == 0 ? "active" : ""),
-					"nr" => $index,
+					"nr" => $lg[1],
 					"lang-name" => $lg[2]
 				],
 				$nav_tpl
@@ -23,7 +23,7 @@ if (!isset($_POST["save"])) {
 			$nav_content .= bo3::c2r(
 				[
 					"class" => ($i == 0 ? "show active" : ""),
-					"nr" => $index,
+					"nr" => $lg[1],
 					"label-title" => $mdl_lang["label"]["title"],
 					"label-content" => $mdl_lang["label"]["content"],
 					"label-meta-keywords" => $mdl_lang["label"]["meta-keywords"],
