@@ -19,7 +19,7 @@ CREATE TABLE `{{ prefix }}_7_articles` (
 CREATE TABLE `{{ prefix }}_7_articles_lang` (
 	`id` int(11) NOT NULL,
 	`article_id` int(11) NOT NULL,
-	`lang_id` int(11) NOT NULL,
+	`lang_id` varchar(11) NOT NULL,
 	`title` varchar(255) NOT NULL,
 	`text` text NOT NULL,
 	`meta-keywords` text NOT NULL,
