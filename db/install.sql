@@ -2,7 +2,7 @@ INSERT INTO `{{ prefix }}_modules` (`name`, `folder`, `code`, `icon`, `img`, `dr
 
 SET @last_id_in_table = LAST_INSERT_ID();
 
-INSERT INTO `{{ prefix }}_modules_lang` (`codename`, `name`, `link_title`, `lang_id`, `module_id`, `module_type`) VALUES ('articles', 'Artigos', 'Ver Artigos', 1, @last_id_in_table, 'main'), ('articles', 'Articles', 'See Articles', 2, @last_id_in_table, 'main'), ('list-articles', 'Lista', 'Ver Lista', 1, @last_id_in_table, 'sub'), ('list-articles', 'List', 'See List', 2, @last_id_in_table, 'sub'), ('add-articles', 'Adicionar', 'Adicionar Artigos', 1, @last_id_in_table, 'sub'), ('add-articles', 'Add', 'Add Articles', 2, @last_id_in_table, 'sub');
+INSERT INTO `{{ prefix }}_modules_lang` (`codename`, `name`, `link_title`, `lang_id`, `module_id`, `module_type`) VALUES ('articles', 'Artigos', 'Ver Artigos', 'pt', @last_id_in_table, 'main'), ('articles', 'Articles', 'See Articles', 'en', @last_id_in_table, 'main'), ('list-articles', 'Lista', 'Ver Lista', 'pt', @last_id_in_table, 'sub'), ('list-articles', 'List', 'See List', 'en', @last_id_in_table, 'sub'), ('add-articles', 'Adicionar', 'Adicionar Artigos', 'pt', @last_id_in_table, 'sub'), ('add-articles', 'Add', 'Add Articles', 'en', @last_id_in_table, 'sub');
 
 INSERT INTO `{{ prefix }}_modules_submenu` (`name`, `link`, `module_ass`, `status`) VALUES ('list-articles', '', @last_id_in_table, 1), ('add-articles', 'add', @last_id_in_table, 1);
 
