@@ -15,8 +15,9 @@
 /**
  * @param $parent_id <int> of a Category
  * @param $i <int> represents the deep level
+ * @return string
  */
-function recursiveWayGet($parent_id, $i = 0){
+function recursiveWayGet ($parent_id, $i = 0) {
 	global $parent_options, $option_item_tpl, $article_result, $lg;
 
 	$a = new c8_category();
@@ -25,8 +26,10 @@ function recursiveWayGet($parent_id, $i = 0){
 	$a = $a->returnChildCategories();
 	$i++;
 
+	$to_return = "";
+
 	foreach ($a as $item) {
-		$parent_options .= bo3::c2r([
+		$to_return .= bo3::c2r([
 			"option-id" => $item->id,
 			"option" => sprintf("%s> %s", str_repeat("-", $i), $item->title),
 			"selected" => isset($article_result[1]->categories_rel) &&  in_array($item->id, $article_result[1]->categories_rel) ? "selected" : ""
@@ -34,8 +37,10 @@ function recursiveWayGet($parent_id, $i = 0){
 
 
 		if ($item->nr_sub_cats > 0) {
-			recursiveWayGet($item->id, $i);
+			$to_return .= recursiveWayGet($item->id, $i);
 		}
+
+		return $to_return;
 	}
 }
 
@@ -104,7 +109,7 @@ if (!isset($_POST["save"])) {
 				"selected" => isset($article_result[1]->categories_rel) &&  in_array($item->id, $article_result[1]->categories_rel) ? "selected" : ""
 			], $option_item_tpl);
 
-			recursiveWayGet($item->id);
+			$parent_options .= recursiveWayGet($item->id);
 		}
 
 		$user_select = null;
