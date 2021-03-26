@@ -64,7 +64,7 @@ class c7_article
 	}
 
 	/** @param string **/
-	public function setContent($t, $txt, $d, $k)
+	public function setContent($t, $txt, $k, $d)
 	{
 		$this->title = $t;
 		$this->text = $txt;
@@ -99,7 +99,7 @@ class c7_article
 	/** @param boolean **/
 	public function setPublished($s)
 	{
-		$this->published = $s;
+		$this->published = (int)$s;
 	}
 
 	/** [Insert new article in DB] @return boolean */
@@ -108,30 +108,29 @@ class c7_article
 		global $cfg, $db, $authData;
 
 		if (
-			$db->query(sprintf(
-				"INSERT INTO %s_7_articles (code, user_id, date, date_update, published) VALUES ('%s', '%s', '%s', '%s', '%s')",
-				$cfg->db->prefix,
-				$this->code,
-				$authData->id,
-				$this->date,
-				$this->date_update,
-				$this->published
-			))
+		$db->query(sprintf(
+			"INSERT INTO %s_7_articles (category_id, code, user_id, published) VALUES (%d, '%s', '%s', %d)",
+			$cfg->db->prefix,
+			$this->category_id,
+			$this->code,
+			$authData->id,
+			$this->published
+		))
 		) {
 			$this->id = $db->insert_id;
 
 			foreach ($this->title as $i => $item) {
 				if (
-					$db->query(sprintf(
-						"INSERT INTO %s_7_articles_lang (article_id, lang_id, title, text, `meta-keywords`, `meta-description`) VALUES (%s, '%s', '%s', '%s', '%s', '%s')",
-						$cfg->db->prefix,
-						$this->id,
-						$cfg->lg[$i + 1][1],
-						$db->real_escape_string($this->title[$i]),
-						$db->real_escape_string($this->text[$i]),
-						$db->real_escape_string($this->description[$i]),
-						$db->real_escape_string($this->keywords[$i])
-					))
+				$db->query(sprintf(
+					"INSERT INTO %s_7_articles_lang (article_id, lang_id, title, text, `meta-keywords`, `meta-description`) VALUES (%s, '%s', '%s', '%s', '%s', '%s')",
+					$cfg->db->prefix,
+					$this->id,
+					$cfg->lg[$i + 1][0],
+					$db->real_escape_string($this->title[$i]),
+					$db->real_escape_string($this->text[$i]),
+					$db->real_escape_string($this->description[$i]),
+					$db->real_escape_string($this->keywords[$i])
+				))
 				) {
 					continue;
 				} else {
@@ -165,11 +164,9 @@ class c7_article
 		global $cfg, $db, $authData;
 
 		if ($db->query(sprintf(
-			"UPDATE %s_7_articles SET code = '%s', date = '%s', date_update = '%s', published = '%s', user_id = '%s' WHERE id = '%s'",
+			"UPDATE %s_7_articles SET code = '%s', published = %d, user_id = %d WHERE id = %d",
 			$cfg->db->prefix,
 			$this->code,
-			$this->date,
-			$this->date_update,
 			$this->published,
 			$authData->id,
 			$this->id
@@ -177,7 +174,7 @@ class c7_article
 			foreach ($cfg->lg as $index => $lg) {
 				if ($lg[0]) {
 					$article_lang_check = $db->query(sprintf(
-						"SELECT id FROM %s_7_articles_lang WHERE article_id = %s AND lang_id = %s",
+						"SELECT id FROM %s_7_articles_lang WHERE article_id = %s AND lang_id = %d",
 						$cfg->db->prefix,
 						$this->id,
 						$index
@@ -185,18 +182,18 @@ class c7_article
 
 					if ($article_lang_check->num_rows > 0) {
 						$db->query(sprintf(
-							"UPDATE %s_7_articles_lang SET title = '%s', text = '%s', `meta-keywords` = '%s', `meta-description` = '%s' WHERE article_id = '%s' AND lang_id = '%s'",
+							"UPDATE %s_7_articles_lang SET title = '%s', text = '%s', `meta-keywords` = '%s', `meta-description` = '%s' WHERE article_id = %d AND lang_id = %d",
 							$cfg->db->prefix,
 							$db->real_escape_string($this->title[$index - 1]),
-							$db->real_escape_string($this->description[$index - 1]),
-							$db->real_escape_string($this->description[$index - 1]),
+							$db->real_escape_string($this->text[$index - 1]),
 							$db->real_escape_string($this->keywords[$index - 1]),
+							$db->real_escape_string($this->description[$index - 1]),
 							$this->id,
-							$cfg->lg[$index][1]
+							$index
 						));
 					} else {
 						$db->query(sprintf(
-							"INSERT INTO %s_7_articles_lang (article_id, lang_id, title, text) VALUES (%s, %s, '%s', '%s')",
+							"INSERT INTO %s_7_articles_lang (article_id, lang_id, title, text) VALUES (%d, %d, '%s', '%s')",
 							$cfg->db->prefix,
 							$this->id,
 							$index,
@@ -217,13 +214,11 @@ class c7_article
 				if (!empty($diff_insert)) {
 					foreach ($diff_insert as $d => $di) {
 						$db->query(sprintf(
-							"INSERT INTO %s_8_categories_rel (category_id, object_id, module, date, date_update) VALUES ('%s', '%s', '%s', '%s', '%s')",
+							"INSERT INTO %s_8_categories_rel (category_id, object_id, module) VALUES (%d, %d, '%s')",
 							$cfg->db->prefix,
 							$di,
 							$this->id,
-							"article",
-							$this->date,
-							$this->date_update
+							"article"
 						));
 					}
 				}
@@ -231,7 +226,7 @@ class c7_article
 				if (!empty($diff_del)) {
 					foreach ($diff_del as $d => $dd) {
 						$db->query(sprintf(
-							"DELETE FROM %s_8_categories_rel WHERE category_id = %s AND object_id = %s AND module = '%s'",
+							"DELETE FROM %s_8_categories_rel WHERE category_id = %d AND object_id = %d AND module = '%s'",
 							$cfg->db->prefix,
 							$dd,
 							$this->id,
@@ -260,25 +255,25 @@ class c7_article
 
 		if ($trash->insert()) {
 			if (
-				$db->query(sprintf(
-					"DELETE c, cl
+			$db->query(sprintf(
+				"DELETE c, cl
 					FROM %s_7_articles c
 						JOIN %s_7_articles_lang cl on cl.article_id = c.id
 					WHERE c.id = %s",
-					$cfg->db->prefix,
-					$cfg->db->prefix,
-					$this->id
-				))
+				$cfg->db->prefix,
+				$cfg->db->prefix,
+				$this->id
+			))
 			) {
 				$current_cats = c8_category::getRelCategories($this->id, "article");
 				if (count($current_cats) > 0 && is_array($current_cats)) {
 					if (
-						$db->query(sprintf(
-							"DELETE FROM %s_8_categories_rel WHERE object_id = %s AND module = '%s'",
-							$cfg->db->prefix,
-							$this->id,
-							"article"
-						))
+					$db->query(sprintf(
+						"DELETE FROM %s_8_categories_rel WHERE object_id = %s AND module = '%s'",
+						$cfg->db->prefix,
+						$this->id,
+						"article"
+					))
 					) {
 						return TRUE;
 					}
@@ -413,29 +408,33 @@ class c7_article
 
 		if ($source->num_rows > 0) {
 			while ($data = $source->fetch_object()) {
-				$rel_array = [];
+				$data->categories_rel = [];
 
 				$source_rel = $db->query(sprintf(
-					"SELECT * FROM %s_8_categories_rel WHERE object_id = %s",
+					"SELECT * FROM %s_8_categories_rel WHERE object_id = %d",
 					$cfg->db->prefix,
 					$this->id
 				));
 
 				if ($source_rel->num_rows > 0) {
 					while ($data_rel = $source_rel->fetch_object()) {
-						array_push($rel_array, $data_rel->category_id);
+						array_push($data->categories_rel, $data_rel->category_id);
 					}
-
-					$data->categories_rel = $rel_array;
-
-					$toReturn[$data->lang_id] = $data;
 				}
+
+				$toReturn[$data->lang_id] = $data;
 			}
 		}
+
 		return $toReturn;
 	}
 
-	/** [Return articles by category ID] @return boolean OR @return object */
+	/** [Return articles by category ID]
+	 * @param null $where
+	 * @param null $order
+	 * @param null $limit
+	 * @return boolean OR @return object
+	 */
 	public function returnArticlesByCategory($where = null, $order = null, $limit = null)
 	{
 		global $cfg, $db, $lg;
