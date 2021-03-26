@@ -1,4 +1,4 @@
-INSERT INTO `{{ prefix }}_modules` (`name`, `folder`, `code`, `icon`, `img`, `dropdown`, `sidebar`) VALUES ('{{ mod-name }}', '{{ mod-folder }}', '{\r\n	\"fa-icon\": \"fa-newspaper\",\r\n	\"img\": \"\",\r\n	\"sub-items\": {\r\n		\"List\": {\r\n			\"url\": \"\"\r\n		},\r\n		\"Add Article\": {\r\n			\"url\": \"add\"\r\n		}\r\n	},\r\n\"sidebar\": true,\r\n\"dropdown\": false\r\n}', 'fa-newspaper', '', 0, 1);
+INSERT INTO `{{ prefix }}_modules` (`name`, `folder`, `code`, `icon`, `img`, `dropdown`, `sidebar`) VALUES ('{{ mod-name }}', '{{ mod-folder }}', '{"fa-icon": "fa-newspaper","img": "","sub-items": {"List": {"url": ""},"Add Article": {"url": "add"}},"sidebar": true,"dropdown": false}', 'fa-newspaper', '', 0, 1);
 
 SET @last_id_in_table = LAST_INSERT_ID();
 
@@ -9,22 +9,21 @@ INSERT INTO `{{ prefix }}_modules_submenu` (`name`, `link`, `module_ass`, `statu
 CREATE TABLE `{{ prefix }}_7_articles` (
 	`id` int(11) NOT NULL,
 	`code` text NOT NULL,
-	`category_id` int(11) NOT NULL,
 	`user_id` int(11) NOT NULL,
 	`published` tinyint(1) NOT NULL,
 	`date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`date_update` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `{{ prefix }}_7_articles_lang` (
-	`id` int(11) NOT NULL,
-	`article_id` int(11) NOT NULL,
-	`lang_id` varchar(11) NOT NULL,
-	`title` varchar(255) NOT NULL,
-	`text` text NOT NULL,
-	`meta-keywords` text NOT NULL,
-	`meta-description` text NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+    `id` int(11) NOT NULL,
+    `article_id` int(11) NOT NULL,
+    `lang_id` int(11) NOT NULL,
+    `title` varchar(255) NOT NULL,
+    `text` text NOT NULL,
+    `meta-keywords` text NOT NULL,
+    `meta-description` text NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
 ALTER TABLE `{{ prefix }}_7_articles`
 	ADD PRIMARY KEY (`id`);
