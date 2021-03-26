@@ -6,10 +6,10 @@ $option_item_tpl = bo3::mdl_load("templates-e/home/option-item.tpl");
 
 /*------------------------------------------*/
 function recursiveWayGet($id, $i = 0, &$data = []) {
-	global $lg_s;
+	global $lg;
 	
 	$a = new c8_category();
-	$a->setLangId($lg_s);
+	$a->setLangId($lg);
 	$a->setParentId($id);
 	$a = $a->returnChildCategories();
 
@@ -45,7 +45,7 @@ if(!empty($data)) {
 /*------------------------------------------*/
 
 $articles = new c7_article();
-$articles->setLangId($lg_s);
+$articles->setLangId($lg);
 
 if(isset($_POST["filterCategory"]) && !empty($_POST["categoryId"]) && $_POST["categoryId"] != "-1") {
 	$articles->setCategoryId($_POST["categoryId"]);
@@ -69,7 +69,7 @@ if(is_array($articles) && count($articles) > 0) {
 		if(!empty($article->categories_rel) && is_array($article->categories_rel)) {
 			foreach ($article->categories_rel as $c => $cat) {
 				$category = new c8_category();
-				$category->setLangId($lg_s);
+				$category->setLangId($lg);
 				$category->setId($cat);
 				$this_category = $category->returnOneCategory();
 

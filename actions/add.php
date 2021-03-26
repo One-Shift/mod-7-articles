@@ -41,10 +41,10 @@ if (!isset($_POST["save"])) {
 	/*------------------------------------------*/
 
 	function recursiveWayGet($id, $i = 0, &$data = []) {
-		global $lg_s;
+		global $lg;
 		
 		$a = new c8_category();
-		$a->setLangId($lg_s);
+		$a->setLangId($lg);
 		$a->setParentId($id);
 		$a = $a->returnChildCategories();
 
