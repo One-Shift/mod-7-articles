@@ -251,7 +251,11 @@ class c7_article
 		$request->setId($this->id);
 		$obj = $request->returnOneArticleAllLanguages();
 
-		$trash = new trash(json_encode($obj), null, $cfg->mdl->folder, $authData->id);
+		# copy data to the trash module
+		$trash = new trash();
+		$trash->setCode(json_encode($obj));
+		$trash->setModule($cfg->mdl->folder);
+		$trash->setUser($authData->id);
 
 		if ($trash->insert()) {
 			if (
@@ -259,26 +263,15 @@ class c7_article
 				"DELETE c, cl
 					FROM %s_7_articles c
 						JOIN %s_7_articles_lang cl on cl.article_id = c.id
-					WHERE c.id = %s",
+					WHERE c.id = %d",
 				$cfg->db->prefix,
 				$cfg->db->prefix,
 				$this->id
 			))
 			) {
-				$current_cats = c8_category::getRelCategories($this->id, "article");
-				if (count($current_cats) > 0 && is_array($current_cats)) {
-					if (
-					$db->query(sprintf(
-						"DELETE FROM %s_8_categories_rel WHERE object_id = %s AND module = '%s'",
-						$cfg->db->prefix,
-						$this->id,
-						"article"
-					))
-					) {
-						return TRUE;
-					}
+				if (!$db->query(sprintf("DELETE FROM %s_8_categories_rel WHERE object_id = %d AND module = '%s'", $cfg->db->prefix, $this->id, "article"))) {
+					return FALSE;
 				}
-
 				return TRUE;
 			}
 		}
@@ -464,6 +457,7 @@ class c7_article
 				$data->categories_rel = c8_category::getRelCategories($data->id, "article");
 				array_push($toReturn, $data);
 			}
+
 			return $toReturn;
 		}
 
