@@ -12,37 +12,7 @@
  * @var string $a
  */
 
-/**
- * @param $parent_id <int> of a Category
- * @param $i <int> represents the deep level
- * @return string
- */
-function recursiveWayGet ($parent_id, $i = 0) {
-	global $parent_options, $option_item_tpl, $article_result, $lg;
-
-	$a = new c8_category();
-	$a->setLangId($lg);
-	$a->setParentId($parent_id);
-	$a = $a->returnChildCategories();
-	$i++;
-
-	$to_return = "";
-
-	foreach ($a as $item) {
-		$to_return .= bo3::c2r([
-			"option-id" => $item->id,
-			"option" => sprintf("%s> %s", str_repeat("-", $i), $item->title),
-			"selected" => isset($article_result[1]->categories_rel) &&  in_array($item->id, $article_result[1]->categories_rel) ? "selected" : ""
-		], $option_item_tpl);
-
-
-		if ($item->nr_sub_cats > 0) {
-			$to_return .= recursiveWayGet($item->id, $i);
-		}
-
-		return $to_return;
-	}
-}
+require bo3::mdl_e("actions-e/utils.php");
 
 if (!isset($_POST["save"])) {
 	if (isset($id) && !empty($id)) {
@@ -59,17 +29,15 @@ if (!isset($_POST["save"])) {
 		$article->setId($id);
 		$article_result = $article->returnOneArticleAllLanguages();
 
-		bo3::dump($article_result);
-
 		$i = 0;
 
-		foreach ($cfg->lg AS $index => $lg) {
-			if ($lg[0]) {
+		foreach ($cfg->lg AS $index => $lag) {
+			if ($lag[0]) {
 				# Tab Header
 				$tabs .= bo3::c2r([
 					"class" => ($i == 0) ? "show active" : "",
 					"nr" => $index,
-					"lang-name" => $lg[2]
+					"lang-name" => $lag[2]
 				], $nav_tpl);
 
 				# Tab body
@@ -93,24 +61,7 @@ if (!isset($_POST["save"])) {
 		}
 
 		# Retrieve a list of all Main Categories
-		$mainCategories = new c8_category();
-		$mainCategories->setLangId($lg);
-		$allCats = $mainCategories->returnAllMainCategories();
-
-		/* look for the category bind to this article */
-		foreach ($allCats as $item) {
-			if (!isset($parent_options)) {
-				$parent_options = "";
-			}
-
-			$parent_options .= bo3::c2r([
-				"option-id" => $item->id,
-				"option" => $item->title,
-				"selected" => isset($article_result[1]->categories_rel) &&  in_array($item->id, $article_result[1]->categories_rel) ? "selected" : ""
-			], $option_item_tpl);
-
-			$parent_options .= recursiveWayGet($item->id);
-		}
+		$parent_options = recursiveWayGet(-1, -1, $article_result[1]->categories_rel);
 
 		$user_select = null;
 		$user_obj = new c9_user();
@@ -174,7 +125,6 @@ if (!isset($_POST["save"])) {
 	}
 } else {
 	$article = new c7_article();
-
 	$article->setId($id);
 	$article->setContent($_POST["name"], $_POST["content"], $_POST["meta-keywords"], $_POST["meta-description"]);
 	$article->setCategories(isset($_POST["category-parent"]) ? $_POST["category-parent"] : []);
