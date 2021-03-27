@@ -119,37 +119,29 @@ class c7_article
 		) {
 			$this->id = $db->insert_id;
 
+			# Insert languages in lang table
 			foreach ($this->title as $i => $item) {
 				if (
-				$db->query(sprintf(
-					"INSERT INTO %s_7_articles_lang (article_id, lang_id, title, text, `meta-keywords`, `meta-description`) VALUES (%s, '%s', '%s', '%s', '%s', '%s')",
+				!$db->query(sprintf("INSERT INTO %s_7_articles_lang (article_id, lang_id, title, text, `meta-keywords`, `meta-description`) VALUES (%d, %d, '%s', '%s', '%s', '%s')",
 					$cfg->db->prefix,
 					$this->id,
-					$cfg->lg[$i + 1][0],
+					$i+1,
 					$db->real_escape_string($this->title[$i]),
 					$db->real_escape_string($this->text[$i]),
-					$db->real_escape_string($this->description[$i]),
-					$db->real_escape_string($this->keywords[$i])
+					$db->real_escape_string($this->keywords[$i]),
+					$db->real_escape_string($this->description[$i])
 				))
 				) {
-					continue;
-				} else {
-					break;
 					return FALSE;
 				}
 			}
 
-			if (is_array($this->categories)) {
-				foreach ($this->categories as $c => $cat) {
-					$db->query(sprintf(
-						"INSERT INTO %s_8_categories_rel (`category_id`, `object_id`, `module`, `date`) VALUES ('%s', %s, '%s', '%s')",
-						$cfg->db->prefix,
-						$cat,
-						$this->id,
-						"article",
-						$this->date
-					));
-				}
+			# Insert the relation with categories
+			foreach ($this->categories as $c => $cat) {
+				$db->query(sprintf(
+					"INSERT INTO %s_8_categories_rel (`category_id`, `object_id`, `module`) VALUES ('%s', %s, '%s')",
+					$cfg->db->prefix, $cat, $this->id, "article"
+				));
 			}
 
 			return TRUE;
@@ -211,28 +203,23 @@ class c7_article
 				$diff_del = array_diff($current_cats, $this->categories);
 				$diff_insert = array_diff($this->categories, $current_cats);
 
-				if (!empty($diff_insert)) {
-					foreach ($diff_insert as $d => $di) {
-						$db->query(sprintf(
-							"INSERT INTO %s_8_categories_rel (category_id, object_id, module) VALUES (%d, %d, '%s')",
-							$cfg->db->prefix,
-							$di,
-							$this->id,
-							"article"
-						));
-					}
+				# Add new categories
+				foreach ($diff_insert as $d => $di) {
+					$db->query(sprintf(
+						"INSERT INTO %s_8_categories_rel (category_id, object_id, module) VALUES (%d, %d, '%s')",
+						$cfg->db->prefix,
+						$di,
+						$this->id,
+						"article"
+					));
 				}
 
-				if (!empty($diff_del)) {
-					foreach ($diff_del as $d => $dd) {
-						$db->query(sprintf(
-							"DELETE FROM %s_8_categories_rel WHERE category_id = %d AND object_id = %d AND module = '%s'",
-							$cfg->db->prefix,
-							$dd,
-							$this->id,
-							"article"
-						));
-					}
+				# Delete categories
+				foreach ($diff_del as $d => $dd) {
+					$db->query(sprintf(
+						"DELETE FROM %s_8_categories_rel WHERE id = %d AND object_id = %d AND module = '%s'",
+						$cfg->db->prefix, $dd, $this->id, "article"
+					));
 				}
 			}
 
@@ -292,16 +279,18 @@ class c7_article
 
 		$toReturn = [];
 
-		$source = $db->query(sprintf(
-			"SELECT bc.*, bcl.`title`, bc.`id`
+		$query = sprintf(
+			"SELECT DISTINCT bc.id, bc.*, bcl.`title`
 				FROM %s_7_articles bc
 					INNER JOIN %s_7_articles_lang bcl on bcl.article_id = bc.id
-				WHERE bcl.lang_id = '%s'
+				WHERE bcl.lang_id = %d
 				ORDER BY bc.date ASC, bcl.title ASC",
 			$cfg->db->prefix,
 			$cfg->db->prefix,
 			$this->lang_id
-		));
+		);
+
+		$source = $db->query($query);
 
 		if ($source->num_rows > 0) {
 			while ($data = $source->fetch_object()) {
@@ -437,7 +426,7 @@ class c7_article
 				FROM %s_7_articles bc
 					INNER JOIN %s_7_articles_lang bcl on bcl.article_id = bc.id
 					INNER JOIN %s_8_categories_rel rcl on rcl.object_id = bc.id
-				WHERE (%s) AND rcl.module = '%s' AND bcl.lang_id = '%s' AND rcl.category_id = %s
+				WHERE (%s) AND rcl.module = '%s' AND bcl.lang_id = %d AND rcl.category_id = %d
 				%s %s",
 			$cfg->db->prefix,
 			$cfg->db->prefix,
@@ -446,8 +435,8 @@ class c7_article
 			"article",
 			$lg,
 			$this->category_id,
-			($order !== null) ? "ORDER BY {$order}" : null,
-			($limit !== null) ? "LIMIT {$limit}" : null
+			(!is_null($order)) ? "ORDER BY {$order}" : null,
+			(is_null($limit)) ? "LIMIT {$limit}" : null
 		));
 
 		if ($source->num_rows > 0) {
