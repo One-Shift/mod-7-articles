@@ -1,79 +1,56 @@
 <?php
 
+/**
+ * @var stdClass $cfg
+ * @var mysqli $db
+ * @var stdClass $authData
+ * @var array $lang
+ * @var array $mdl_lang
+ * @var string $lg_s
+ * @var int $lg
+ * @var string $pg
+ * @var int $id
+ * @var string $a
+ */
+
 $line_tpl = bo3::mdl_load("templates-e/home/table-row.tpl");
 $item_tpl = bo3::mdl_load("templates-e/home/item.tpl");
 $option_item_tpl = bo3::mdl_load("templates-e/home/option-item.tpl");
 
-/*------------------------------------------*/
-function recursiveWayGet($id, $i = 0, &$data = []) {
-	global $lg;
-	
-	$a = new c8_category();
-	$a->setLangId($lg);
-	$a->setParentId($id);
-	$a = $a->returnChildCategories();
+require bo3::mdl_e("actions-e/utils.php");
 
-	foreach ($a as $item) {
-		$tmp = [];
-		$tmp["id"] = $item->id;
-		$tmp["title"] = $item->title;
-		$tmp["level"] = $i;
-
-		$data[] = $tmp;
-
-		if ($item->nr_sub_cats > 0 ){
-			recursiveWayGet($item->id, $i+1, $data);
-		}
-	}
-}
-
-recursiveWayGet(-1, 0, $data);
-
-if(!empty($data)) {
-	foreach ($data as $item) {
-		if (!isset($categories_list)) {
-			$categories_list = "";
-		}
-
-		$categories_list .= bo3::c2r([
-			"option-id" => $item["id"],
-			"option" => sprintf("%s> %s", str_repeat("-", $item["level"]), $item["title"]),
-			"selected" => isset($_POST["categoryId"]) && $_POST["categoryId"] == $item["id"] ? "selected" : ""
-		], $option_item_tpl);
-	}
-}
-/*------------------------------------------*/
+$categories_list = recursiveWayGet(-1, -1, isset($_POST["categoryId"]) ? [$_POST["categoryId"]] : []);
 
 $articles = new c7_article();
 $articles->setLangId($lg);
 
-if(isset($_POST["filterCategory"]) && !empty($_POST["categoryId"]) && $_POST["categoryId"] != "-1") {
+if (isset($_POST["filterCategory"]) && !empty($_POST["categoryId"]) && $_POST["categoryId"] != "-1") {
 	$articles->setCategoryId($_POST["categoryId"]);
 	$articles = $articles->returnArticlesByCategory("", "bc.date ASC, bcl.title ASC", null);
 } else {
 	$articles = $articles->returnAllArticles();
 }
 
-if(is_array($articles) && count($articles) > 0) {
+if (is_array($articles) && count($articles) > 0) {
 	foreach ($articles as $article) {
 		if (!isset($table_items)) {
 			$table_items = "";
 		}
 
-		if(!isset($list)) {
+		if (!isset($list)) {
 			$list = "";
 		}
 
 		$categories = "";
 
-		if(!empty($article->categories_rel) && is_array($article->categories_rel)) {
+		if (!empty($article->categories_rel) && is_array($article->categories_rel)) {
 			foreach ($article->categories_rel as $c => $cat) {
 				$category = new c8_category();
 				$category->setLangId($lg);
 				$category->setId($cat);
 				$this_category = $category->returnOneCategory();
 
-				if($c == (count($article->categories_rel) - 1)) {
+				if ($c == (count($article->categories_rel) - 1)) {
 					$categories .= "{$this_category->title}";
 				} else {
 					$categories .= "{$this_category->title}, ";
@@ -97,7 +74,7 @@ if(is_array($articles) && count($articles) > 0) {
 	}
 }
 
-if(!isset($list)) {
+if (!isset($list)) {
 	$message = bo3::c2r(["message" => $mdl_lang["message"]["empty"]], bo3::mdl_load("templates/message.tpl"));
 }
 
