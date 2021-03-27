@@ -12,37 +12,7 @@
  * @var string $a
  */
 
-/**
- * @param $parent_id <int> of a Category
- * @param $i <int> represents the deep level
- * @return string
- */
-function recursiveWayGet ($parent_id, $i = 0) {
-	global $parent_options, $option_item_tpl, $article_result, $lg;
-
-	$a = new c8_category();
-	$a->setLangId($lg);
-	$a->setParentId($parent_id);
-	$a = $a->returnChildCategories();
-	$i++;
-
-	$to_return = "";
-
-	foreach ($a as $item) {
-		$to_return .= bo3::c2r([
-			"option-id" => $item->id,
-			"option" => sprintf("%s> %s", str_repeat("-", $i), $item->title),
-			"selected" => isset($article_result[1]->categories_rel) &&  in_array($item->id, $article_result[1]->categories_rel) ? "selected" : ""
-		], $option_item_tpl);
-
-
-		if ($item->nr_sub_cats > 0) {
-			$to_return .= recursiveWayGet($item->id, $i);
-		}
-
-		return $to_return;
-	}
-}
+require bo3::mdl_e("actions-e/utils.php");
 
 if (!isset($_POST["save"])) {
 	$nav_tpl = bo3::mdl_load("templates-e/add/nav-tab-item.tpl");
@@ -77,24 +47,7 @@ if (!isset($_POST["save"])) {
 	}
 
 	# Retrieve a list of all Main Categories
-	$mainCategories = new c8_category();
-	$mainCategories->setLangId($lg);
-	$allCats = $mainCategories->returnAllMainCategories();
-
-	/* look for the category bind to this article */
-	foreach ($allCats as $item) {
-		if (!isset($parent_options)) {
-			$parent_options = "";
-		}
-
-		$parent_options .= bo3::c2r([
-			"option-id" => $item->id,
-			"option" => $item->title,
-			"selected" => isset($article_result[1]->categories_rel) &&  in_array($item->id, $article_result[1]->categories_rel) ? "selected" : ""
-		], $option_item_tpl);
-
-		$parent_options .= recursiveWayGet($item->id);
-	}
+	$parent_options = recursiveWayGet(-1, -1, isset($article_result[1]->categories_rel) ? $article_result[1]->categories_rel : []);
 
 	/*------------------------------------------*/
 
