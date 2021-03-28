@@ -31,7 +31,7 @@ if (!isset($_POST["save"])) {
 
 		$i = 0;
 
-		foreach ($cfg->lg AS $index => $lag) {
+		foreach ($cfg->lg as $index => $lag) {
 			if ($lag[0]) {
 				# Tab Header
 				$tabs .= bo3::c2r([
